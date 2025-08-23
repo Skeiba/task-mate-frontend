@@ -2,17 +2,14 @@ import { ref, computed, onMounted } from "vue"
 import {useAuthStore} from "../store/authStore.ts";
 
 export function useMainLayout() {
-    // Store
     const authStore = useAuthStore()
 
-    // Reactive state
     const activeTab = ref("today")
     const activeTabData = ref<any>(null)
     const selectedItem = ref<any>(null)
     const showUserMenu = ref(false)
     const viewMode = ref<"list" | "grid">("list")
 
-    // Sample data (replace with store later)
     const todayTasksCount = ref(5)
     const categories = ref([
         { id: 1, name: "Work", color: "#3B82F6", taskCount: 8 },
@@ -21,7 +18,6 @@ export function useMainLayout() {
         { id: 4, name: "Health", color: "#EF4444", taskCount: 1 }
     ])
 
-    // Computed
     const user = computed(() => authStore.user)
     const isAdmin = computed(() => user.value?.role === "ADMIN" )
 
@@ -46,7 +42,6 @@ export function useMainLayout() {
         }
     })
 
-    // Methods
     const setActiveTab = (tab: string, data: any = null) => {
         activeTab.value = tab
         activeTabData.value = data
@@ -74,7 +69,6 @@ export function useMainLayout() {
         selectedItem.value = null
     }
 
-    // Lifecycle
     onMounted(() => {
         setActiveTab("today")
 
@@ -86,7 +80,6 @@ export function useMainLayout() {
     })
 
     return {
-        // state
         activeTab,
         activeTabData,
         selectedItem,
@@ -95,13 +88,11 @@ export function useMainLayout() {
         todayTasksCount,
         categories,
 
-        // computed
         user,
         isAdmin,
         userInitials,
         activeTabTitle,
 
-        // methods
         setActiveTab,
         getTabClass,
         toggleUserMenu,

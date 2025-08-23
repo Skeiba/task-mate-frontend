@@ -84,9 +84,7 @@
       </div>
     </aside>
 
-    <!-- Main Content -->
     <div class="flex-1 flex flex-col py-2">
-      <!-- Header -->
       <header class="h-14  bg-color flex items-center justify-between px-6">
         <ThemeToggle/>
         <h2 class="text-lg font-semibold">{{ activeTabTitle }}</h2>
@@ -120,7 +118,6 @@
         </div>
       </header>
 
-      <!-- Content -->
       <main class="flex-1 overflow-y-auto p-6">
         <div v-if="activeTab === 'today'">
           <p class="text-gray-500">Today’s tasks will appear here.</p>

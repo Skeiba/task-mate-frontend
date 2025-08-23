@@ -9,7 +9,6 @@ export function useResetPasswordView() {
     const tokenFromLink = route.query.token as string || "";
     const authStore = useAuthStore();
 
-    // Token handled as 6 separate digits
     const tokenDigits = ref<string[]>(["", "", "", "", "", ""]);
 
     const form = ref<ResetPasswordData & { confirmPassword: string }>({
@@ -34,7 +33,6 @@ export function useResetPasswordView() {
     const validateForm = () => {
         errors.value = {};
 
-        // Token validation
         const token = tokenDigits.value.join("");
         form.value.token = token; // keep token in sync
 
@@ -44,14 +42,12 @@ export function useResetPasswordView() {
             errors.value.token = "Reset code must be a 6-digit number";
         }
 
-        // Password validation
         if (!form.value.newPassword) {
             errors.value.newPassword = "Password is required";
         } else if (form.value.newPassword.length < 8) {
             errors.value.newPassword = "Password must be at least 8 characters";
         }
 
-        // Confirm password validation
         if (!form.value.confirmPassword) {
             errors.value.confirmPassword = "Please confirm your password";
         } else if (form.value.newPassword !== form.value.confirmPassword) {
@@ -77,19 +73,16 @@ export function useResetPasswordView() {
         const pasteData = event.clipboardData?.getData("text") ?? "";
 
         if (/^\d{6}$/.test(pasteData)) {
-            // Fill digits directly
             pasteData.split("").forEach((char, i) => {
                 tokenDigits.value[i] = char;
             });
 
-            // Move focus to the last box
             const lastInput = document.getElementById("token-5") as HTMLInputElement;
             if (lastInput) lastInput.focus();
         }
     };
 
 
-    // Move focus to the next input after typing
     const focusNext = (index: number, event: Event) => {
         const input = event.target as HTMLInputElement;
         if (input.value && index < tokenDigits.value.length - 1) {
@@ -101,18 +94,15 @@ export function useResetPasswordView() {
     };
 
     onMounted(() => {
-        // Autofill token if it's already in the query
         if (tokenFromLink && /^\d{6}$/.test(tokenFromLink)) {
             tokenFromLink.split("").forEach((digit, i) => {
                 tokenDigits.value[i] = digit;
             });
             form.value.token = tokenFromLink;
 
-            // Move focus to password input instead of token inputs
             const passwordInput = document.querySelector<HTMLInputElement>("#password");
             passwordInput?.focus();
         } else {
-            // If no token in URL, start from the first box
             const firstInput = document.querySelector<HTMLInputElement>("#token-0");
             firstInput?.focus();
         }

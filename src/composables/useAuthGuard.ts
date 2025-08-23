@@ -22,7 +22,6 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
     const route = useRoute()
     const authStore = useAuthStore()
 
-    // Computed properties
     const isAuthenticated = computed(() => authStore.isAuthenticated)
     const isLoading = computed(() => authStore.isLoading)
 
@@ -40,14 +39,11 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
         return isAuthenticated.value && hasRequiredRole.value
     })
 
-    // Methods
     const checkAuth = async (): Promise<boolean> => {
-        // Ensure user data is loaded
         if (!authStore.user && !authStore.isLoading) {
             await authStore.getCurrentUser()
         }
 
-        // Wait for loading to complete
         if (authStore.isLoading) {
             return new Promise((resolve) => {
                 const unwatch = watchEffect(() => {
@@ -103,7 +99,6 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
         return true
     }
 
-    // Auto-check on route changes if immediate is true
     if (immediate) {
         watchEffect(async () => {
             if (!isLoading.value) {
@@ -113,7 +108,6 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
     }
 
     return {
-        // State
         isAuthenticated,
         isLoading,
         hasRequiredRole,
@@ -121,7 +115,6 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
         canAccess,
         user: computed(() => authStore.user),
 
-        // Methods
         checkAuth,
         checkAuthSync,
         requireAuth,

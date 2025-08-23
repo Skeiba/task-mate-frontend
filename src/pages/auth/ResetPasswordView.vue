@@ -19,7 +19,6 @@
 
         <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
 
-          <!-- Error alert -->
           <div
               v-if="authStore.error"
               class="rounded-md bg-red-100 border border-red-300 p-2 flex items-center justify-between"
@@ -31,7 +30,6 @@
             </button>
           </div>
 
-          <!-- Token input (6 digits) -->
           <div>
             <label class="block text-sm font-medium text-secondary mb-2">
               Reset Code
@@ -53,7 +51,6 @@
             <p v-if="errors.token" class="mt-1 text-sm text-red-600">{{ errors.token }}</p>
           </div>
 
-          <!-- Password -->
           <div>
             <label for="password" class="block text-sm font-medium text-secondary mb-1">
               New Password
@@ -84,7 +81,6 @@
             <p v-if="errors.newPassword" class="mt-1 text-sm text-red-600">{{ errors.newPassword }}</p>
           </div>
 
-          <!-- Confirm Password -->
           <div>
             <label for="confirmPassword" class="block text-sm font-medium text-secondary mb-1">
               Confirm Password
@@ -115,7 +111,6 @@
             <p v-if="errors.confirmPassword" class="mt-1 text-sm text-red-600">{{ errors.confirmPassword }}</p>
           </div>
 
-          <!-- Submit button -->
           <div>
             <button
                 type="submit"

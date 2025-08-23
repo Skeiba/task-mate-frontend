@@ -23,7 +23,6 @@
       </div>
 
       <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
-        <!-- Success Message -->
         <div
             v-if="successMessage"
             class="rounded-md bg-green-50 p-4 border border-green-200"
@@ -40,7 +39,6 @@
           </div>
         </div>
 
-        <!-- Error Alert -->
         <div
             v-if="authStore.error"
             class="rounded-md bg-red-50 p-4 border border-red-200"
@@ -69,7 +67,6 @@
         </div>
 
         <div class="space-y-4">
-          <!-- Username Field -->
           <div>
             <label for="username" class="block text-sm font-medium text-secondary mb-1">
               Username
@@ -90,7 +87,6 @@
             <p v-if="errors.username" class="mt-1 text-sm text-red-600">{{ errors.username }}</p>
           </div>
 
-          <!-- Email Field -->
           <div>
             <label for="email" class="block text-sm font-medium text-secondary mb-1">
               Email address
@@ -111,7 +107,6 @@
             <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
           </div>
 
-          <!-- Password Field -->
           <div>
             <label for="password" class="block text-sm font-medium text-secondary mb-1">
               Password
@@ -145,7 +140,6 @@
                 />
               </button>
             </div>
-            <!-- Password strength indicator -->
             <div class="mt-1">
               <div class="flex space-x-1">
                 <div
@@ -162,7 +156,6 @@
             <p v-if="errors.password" class="mt-1 text-sm text-red-600">{{ errors.password }}</p>
           </div>
 
-          <!-- Confirm Password Field -->
           <div>
             <label for="confirmPassword" class="block text-sm font-medium text-secondary mb-1">
               Confirm Password
@@ -184,7 +177,6 @@
           </div>
         </div>
 
-        <!-- Terms and Conditions -->
         <div class="flex items-center">
           <input
               id="agreeToTerms"
@@ -202,7 +194,6 @@
           </label>
         </div>
 
-        <!-- Submit Button -->
         <div>
           <button
               type="submit"
