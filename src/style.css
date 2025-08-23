@@ -1,0 +1,219 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@import "tailwindcss";
+
+:root {
+    --theme-transition-duration: 0.25s;
+    --theme-transition-timing: ease-in-out;
+
+    /* Font family */
+    --font-family: "Poppins", sans-serif;
+
+    /* Font weights */
+    --font-title: 700;   /* Bold for titles */
+    --font-text: 400;    /* Normal */
+    --font-subtext: 300; /* Light */
+
+    /* Font sizes */
+    --size-h1: 2.25rem; /* ~36px */
+    --size-h2: 1.875rem; /* ~30px */
+    --size-h3: 1.5rem;   /* ~24px */
+    --size-text: 1rem;   /* ~16px */
+    --size-subtext: 0.875rem; /* ~14px */
+
+    /* Line heights */
+    --lh-title: 1.2;
+    --lh-text: 1.5;
+    --lh-subtext: 1.4;
+
+    /* Default theme variables */
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --text-secondary-color: #4a5565;
+    --border-color: #e5e5e5;
+
+    --link-color: #3B82F6;
+    --link-hover-color: #2563EB;
+
+    /* Typography rendering */
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Theme classes */
+.light {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+    --text-secondary-color: #4a5565;
+    --border-color: #e5e5e5;
+
+    --link-color: #3B82F6;
+    --link-hover-color: #2563EB;
+}
+
+.dark {
+    --bg-color: #1a1a1a;
+    --text-color: #ffffff;
+    --text-secondary-color: #c7c7c7;
+    --border-color: #404040;
+
+    --link-color: #60A5FA;
+    --link-hover-color: #3B82F6;
+}
+
+.text-secondary {
+    color: var(--text-secondary-color);
+}
+
+.link-color {
+    color: var(--link-color);
+    transition: color var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+.link-color:hover {
+    color: var(--link-hover-color);
+}
+
+.bg-color {
+    background-color: var(--bg-color);
+}
+
+
+/* Base styles */
+html {
+    box-sizing: border-box;
+}
+
+*, *::before, *::after {
+    box-sizing: inherit;
+    transition:
+            background-color var(--theme-transition-duration) var(--theme-transition-timing),
+            color var(--theme-transition-duration) var(--theme-transition-timing),
+            border-color var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-family);
+    font-size: var(--size-text);
+    line-height: var(--lh-text);
+}
+
+#root {
+    margin: 0;
+    padding: 0;
+}
+
+/* Button styles */
+button {
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition:
+            border-color 0.25s,
+            background-color var(--theme-transition-duration) var(--theme-transition-timing),
+            color var(--theme-transition-duration) var(--theme-transition-timing);
+}
+
+button:hover {
+    border-color: #646cff;
+    background-color: rgba(100, 108, 255, 0.1);
+}
+
+button:focus,
+button:focus-visible {
+    outline: 2px solid #646cff;
+    outline-offset: 2px;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Tailwind utilities layer */
+@layer utilities {
+    /* Typography utilities */
+    .font-title {
+        font-weight: var(--font-title);
+        line-height: var(--lh-title);
+    }
+
+    .font-text {
+        font-weight: var(--font-text);
+        line-height: var(--lh-text);
+    }
+
+    .font-subtext {
+        font-weight: var(--font-subtext);
+        line-height: var(--lh-subtext);
+    }
+
+    /* Font sizes */
+    .text-h1 {
+        font-size: var(--size-h1);
+    }
+
+    .text-h2 {
+        font-size: var(--size-h2);
+    }
+
+    .text-h3 {
+        font-size: var(--size-h3);
+    }
+
+    .text-body {
+        font-size: var(--size-text);
+    }
+
+    .text-sub {
+        font-size: var(--size-subtext);
+    }
+
+    /* Theme utilities */
+    .bg-theme {
+        background-color: var(--bg-color);
+    }
+
+    .text-theme {
+        color: var(--text-color);
+    }
+
+    .border-theme {
+        border-color: var(--border-color);
+    }
+}
+
+/* Base layer for consistent defaults */
+@layer base {
+    h1, h2, h3, h4, h5, h6 {
+        margin: 0;
+        font-weight: var(--font-title);
+        line-height: var(--lh-title);
+    }
+
+    h1 { font-size: var(--size-h1); }
+    h2 { font-size: var(--size-h2); }
+    h3 { font-size: var(--size-h3); }
+
+    p {
+        margin: 0;
+        font-weight: var(--font-text);
+        font-size: var(--size-text);
+        line-height: var(--lh-text);
+    }
+
+    small {
+        font-weight: var(--font-subtext);
+        font-size: var(--size-subtext);
+        line-height: var(--lh-subtext);
+    }
+}
