@@ -76,7 +76,7 @@
             <label for="password" class="block text-sm font-medium text-secondary mb-1">
               Password
             </label>
-            <div class="flex items-center gap-2">
+            <div class="relative">
               <input
                   id="password"
                   v-model="form.password"
@@ -93,7 +93,7 @@
                   type="button"
                   @click="showPassword = !showPassword"
                   :disabled="authStore.isLoading"
-                  class="p-2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none disabled:opacity-50"
+                  class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
               >
                 <EyeOff
                     v-if="showPassword"

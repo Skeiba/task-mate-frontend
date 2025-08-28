@@ -14,9 +14,10 @@ export interface Task {
     status: 'PENDING' | 'DONE' | 'MISSED';
     priority: 'LOW' | 'MEDIUM' | 'HIGH';
     dueDate: string;
-    categories: Category[];
     createdAt: string;
     userId: string;
+    isFavorite: boolean;
+    categories: Category[];
 }
 
 export interface Category {
@@ -25,6 +26,12 @@ export interface Category {
     color: string;
     icon: string;
     createdAt: string;
+}
+
+export interface  CategoryRequest{
+    name: string;
+    color: string;
+    icon: string;
 }
 
 export interface ApiResponse<T> {
@@ -75,5 +82,20 @@ export interface TaskRequest{
     status: Task['status'];
     priority: Task['priority'];
     dueDate: string;
-    categories: Category[];
+    categoryIds: string[];
+    isFavorite: boolean;
+}
+
+export interface UpdateProfileData {
+    username?: string;
+    email?: string;
+}
+
+export interface ChangePasswordData {
+    oldPassword: string;
+    newPassword: string;
+}
+
+export interface AdminChangePasswordData {
+    newPassword: string;
 }

@@ -72,7 +72,7 @@
 
               <button type="button" @click="showPassword = !showPassword"
                       :disabled="authStore.isLoading"
-                      class="p-2 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none disabled:opacity-50"
+                      class="p-2 text-gray-400 hover:text-gray-600 rounded-lg transition-colors focus:outline-none disabled:opacity-50"
               >
                 <EyeOff v-if="showPassword" class="h-5 w-5"/>
                 <Eye v-else class="h-5 w-5"/>

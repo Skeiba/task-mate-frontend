@@ -1,9 +1,9 @@
 <template>
-  <div class="flex h-screen bg-color">
+  <div class="flex h-screen bg-secondary-color">
     <!-- Sidebar -->
-    <aside class="w-64 bg-color border-r border-gray-200 flex flex-col">
+    <aside class="w-64 bg-secondary-color flex flex-col">
       <div class="flex items-center justify-between px-4 py-3">
-        <h1 class="text-2xl font-bold text-color ">Task Mate</h1>
+        <h1 class="text-2xl font-bold text-color">Task Mate</h1>
         <button
             @click="setActiveTab('search')"
             class="p-2 rounded-full hover:bg-gray-100"
@@ -12,7 +12,7 @@
         </button>
       </div>
 
-      <nav class="flex-1 overflow-y-auto px-2 py-4 space-y-1">
+      <nav class="flex-1 overflow-y-auto px-2 py-4 space-y-2">
         <button
             class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg border"
             :class="getTabClass('today')"
@@ -21,9 +21,26 @@
           <Calendar class="w-4 h-4 mr-2" />
           Today
           <span
+              v-if="todayTasksCount > 0"
               class="ml-auto inline-flex items-center px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700"
           >
             {{ todayTasksCount }}
+          </span>
+        </button>
+
+        <!-- All Tasks Button -->
+        <button
+            class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg border"
+            :class="getTabClass('all')"
+            @click="setActiveTab('all')"
+        >
+          <List class="w-4 h-4 mr-2" />
+          Inbox
+          <span
+              v-if="allTasks.length > 0"
+              class="ml-auto text-xs text-gray-500"
+          >
+            {{ allTasks.length }}
           </span>
         </button>
 
@@ -34,13 +51,49 @@
         >
           <Star class="w-4 h-4 mr-2" />
           Favorites
+          <span
+              v-if="favoriteTasks.length > 0"
+              class="ml-auto text-xs text-gray-500"
+          >
+            {{ favoriteTasks.length }}
+          </span>
         </button>
 
         <div class="pt-4">
-          <p class="px-3 text-xs font-semibold text-gray-500 uppercase">
-            Categories
-          </p>
-          <div class="mt-2 space-y-1">
+          <div class="flex items-center justify-between px-3 mb-2">
+            <p class="text-xs font-semibold text-gray-500 uppercase">
+              Categories
+            </p>
+            <button
+                @click="categoryViewRef?.openModal()"
+                class="p-1 hover:bg-gray-200 rounded"
+                title="Manage Categories"
+            >
+              <Settings class="w-4 h-4 text-gray-400" />
+            </button>
+          </div>
+
+          <!-- Loading State -->
+          <div v-if="isLoadingCategories" class="px-3 py-2">
+            <div class="flex items-center text-sm text-gray-500">
+              <Loader2 class="w-4 h-4 mr-2 animate-spin" />
+              Loading categories...
+            </div>
+          </div>
+
+          <!-- Error State -->
+          <div v-else-if="categoriesError" class="px-3 py-2">
+            <p class="text-sm text-red-600">{{ categoriesError }}</p>
+            <button
+                @click="loadCategories"
+                class="text-xs text-blue-600 hover:text-blue-800 mt-1"
+            >
+              Try again
+            </button>
+          </div>
+
+          <!-- Categories List -->
+          <div v-else class="space-y-1">
             <button
                 v-for="cat in categories"
                 :key="cat.id"
@@ -48,18 +101,32 @@
                 :class="getTabClass('category', cat.id)"
                 @click="setActiveTab('category', cat)"
             >
-              <span
-                  class="w-2.5 h-2.5 rounded-full mr-2"
-                  :style="{ backgroundColor: cat.color }"
-              />
+              <div
+                  class="w-6 h-6 rounded-full mr-2 flex items-center justify-center"
+                  :style="{ backgroundColor: cat.color || '#6B7280' }"
+              >
+                <component
+                    :is="lucideIconMap[cat.icon] || lucideIconMap['briefcase']"
+                    class="w-3 h-3 text-white"
+                />
+              </div>
               {{ cat.name }}
-              <span class="ml-auto text-xs text-gray-500">{{ cat.taskCount }}</span>
+              <span class="ml-auto text-xs text-gray-500">{{ cat.taskCount || 0 }}</span>
+            </button>
+
+            <!-- Add Category Button -->
+            <button
+                @click="categoryViewRef?.openModal()"
+                class="w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg border border-dashed border-gray-300 text-gray-500 hover:bg-gray-50 hover:border-gray-400"
+            >
+              <Plus class="w-4 h-4 mr-2" />
+              Add Category
             </button>
           </div>
         </div>
 
         <div v-if="isAdmin" class="pt-4">
-          <p class="px-3 text-xs font-semibold text-gray-500 uppercase">
+          <p class="px-3 pb-2 text-xs font-semibold text-gray-500 uppercase">
             Admin
           </p>
           <button
@@ -75,7 +142,7 @@
 
       <div class="p-4 border-t">
         <button
-            @click="$emit('add-task')"
+            @click="taskViewRef?.openModal()"
             class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700"
         >
           <Plus class="w-4 h-4 mr-2" />
@@ -84,91 +151,298 @@
       </div>
     </aside>
 
-    <div class="flex-1 flex flex-col py-2">
-      <header class="h-14  bg-color flex items-center justify-between px-6">
+    <div class="flex-1 flex flex-col">
+      <header class="h-14 bg-secondary-color flex items-center justify-between px-6">
         <ThemeToggle/>
         <h2 class="text-lg font-semibold">{{ activeTabTitle }}</h2>
-        <div class="relative user-menu">
+        <div class="relative">
           <button
-              class="flex items-center space-x-2 px-3 py-1 hover:bg-gray-100"
-              @click="toggleUserMenu"
+              class="flex items-center space-x-2 px-3 py-1 hover-theme rounded-lg transition-colors"
+              @click="profileViewRef?.openModal()"
           >
             <div
                 class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold"
             >
               {{ userInitials }}
             </div>
-            <ChevronDown class="w-4 h-4 text-gray-500" />
+            <span class="text-sm font-medium">{{ user?.username }}</span>
           </button>
-
-          <div
-              v-if="showUserMenu"
-              class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-50"
-          >
-            <p class="px-4 py-2 text-sm text-gray-700 font-medium border-b">
-              {{ user?.username }}
-            </p>
-            <button
-                @click="handleLogout"
-                class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
-            >
-              Logout
-            </button>
-          </div>
         </div>
       </header>
 
-      <main class="flex-1 overflow-y-auto p-6">
+      <main class="flex-1 overflow-y-auto p-6 bg-color rounded-tl-2xl">
+        <!-- Today's Tasks View -->
         <div v-if="activeTab === 'today'">
-          <p class="text-gray-500">Today’s tasks will appear here.</p>
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-xl font-semibold text-color">Today's Tasks</h3>
+              <p class="text-secondary">{{ todayTasksCount }} tasks due today</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button
+                  @click="viewMode = viewMode === 'list' ? 'grid' : 'list'"
+                  class="p-2 hover:bg-gray-200 rounded-lg"
+                  :title="viewMode === 'list' ? 'Switch to grid view' : 'Switch to list view'"
+              >
+                <Grid3X3 v-if="viewMode === 'list'" class="w-5 h-5" />
+                <List v-else class="w-5 h-5" />
+              </button>
+              <button
+                  @click="refreshData"
+                  class="p-2 hover:bg-gray-200 rounded-lg"
+                  title="Refresh tasks"
+                  :disabled="isLoadingTasks"
+              >
+                <RefreshCw class="w-5 h-5" :class="{ 'animate-spin': isLoadingTasks }" />
+              </button>
+            </div>
+          </div>
+
+          <TaskList
+              :tasks="currentTasks"
+              :loading="isLoadingTasks"
+              :error="tasksError"
+              :view-mode="viewMode"
+              @task-click="(task) => taskViewRef?.openModal(task.id, 'view')"
+              @task-edit="(task) => taskViewRef?.openModal(task.id, 'edit')"
+              @task-delete="handleDeleteTaskById"
+              @task-favorite="onToggleFavorite"
+              @task-mark-done="onMarkAsDone"
+              @retry-load="loadTodayTasks"
+          />
         </div>
+
+        <!-- All Tasks View -->
+        <div v-else-if="activeTab === 'all'">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-xl font-semibold text-color">All Tasks</h3>
+              <p class="text-secondary">{{ allTasks.length }} total tasks</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button
+                  @click="viewMode = viewMode === 'list' ? 'grid' : 'list'"
+                  class="p-2 hover:bg-gray-200 rounded-lg"
+                  :title="viewMode === 'list' ? 'Switch to grid view' : 'Switch to list view'"
+              >
+                <Grid3X3 v-if="viewMode === 'list'" class="w-5 h-5" />
+                <List v-else class="w-5 h-5" />
+              </button>
+              <button
+                  @click="refreshData"
+                  class="p-2 hover:bg-gray-200 rounded-lg"
+                  title="Refresh tasks"
+                  :disabled="isLoadingTasks"
+              >
+                <RefreshCw class="w-5 h-5" :class="{ 'animate-spin': isLoadingTasks }" />
+              </button>
+            </div>
+          </div>
+          <TaskList
+              :tasks="currentTasks"
+              :loading="isLoadingTasks"
+              :error="tasksError"
+              :view-mode="viewMode"
+              @task-click="(task) => taskViewRef?.openModal(task.id, 'view')"
+              @task-edit="(task) => taskViewRef?.openModal(task.id, 'edit')"
+              @task-delete="handleDeleteTaskById"
+              @task-favorite="onToggleFavorite"
+              @task-mark-done="onMarkAsDone"
+              @retry-load="loadAllTasks"
+          />
+        </div>
+
+        <!-- Favorites View -->
         <div v-else-if="activeTab === 'favorites'">
-          <p class="text-gray-500">Favorite tasks go here.</p>
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-xl font-semibold text-color">Favorite Tasks</h3>
+              <p class="text-secondary">{{ favoriteTasks.length }} favorite tasks</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button
+                  @click="viewMode = viewMode === 'list' ? 'grid' : 'list'"
+                  class="p-2 hover:bg-gray-200 rounded-lg"
+                  :title="viewMode === 'list' ? 'Switch to grid view' : 'Switch to list view'"
+              >
+                <Grid3X3 v-if="viewMode === 'list'" class="w-5 h-5" />
+                <List v-else class="w-5 h-5" />
+              </button>
+              <button
+                  @click="refreshData"
+                  class="p-2 hover:bg-gray-200 rounded-lg"
+                  title="Refresh tasks"
+                  :disabled="isLoadingTasks"
+              >
+                <RefreshCw class="w-5 h-5" :class="{ 'animate-spin': isLoadingTasks }" />
+              </button>
+            </div>
+          </div>
+
+          <TaskList
+              :tasks="currentTasks"
+              :loading="isLoadingTasks"
+              :error="tasksError"
+              :view-mode="viewMode"
+              @task-click="(task) => taskViewRef?.openModal(task.id, 'view')"
+              @task-edit="(task) => taskViewRef?.openModal(task.id, 'edit')"
+              @task-delete="handleDeleteTaskById"
+              @task-favorite="onToggleFavorite"
+              @task-mark-done="onMarkAsDone"
+              @retry-load="loadAllTasks"
+          />
         </div>
+
+        <!-- Category View -->
         <div v-else-if="activeTab === 'category'">
-          <p class="text-gray-500">Tasks for {{ activeTabData?.name }}.</p>
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-xl font-semibold text-color">{{ activeTabData?.name }}</h3>
+              <p class="text-secondary">{{ currentTasks.length }} tasks in this category</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <button
+                  @click="viewMode = viewMode === 'list' ? 'grid' : 'list'"
+                  class="p-2 hover:bg-gray-200 rounded-lg"
+                  :title="viewMode === 'list' ? 'Switch to grid view' : 'Switch to list view'"
+              >
+                <Grid3X3 v-if="viewMode === 'list'" class="w-5 h-5" />
+                <List v-else class="w-5 h-5" />
+              </button>
+              <button
+                  @click="refreshData"
+                  class="p-2 hover:bg-gray-200 rounded-lg"
+                  title="Refresh tasks"
+                  :disabled="isLoadingTasks"
+              >
+                <RefreshCw class="w-5 h-5" :class="{ 'animate-spin': isLoadingTasks }" />
+              </button>
+            </div>
+          </div>
+
+          <TaskList
+              :tasks="currentTasks"
+              :loading="isLoadingTasks"
+              :error="tasksError"
+              :view-mode="viewMode"
+              @task-click="(task) => taskViewRef?.openModal(task.id, 'view')"
+              @task-edit="(task) => taskViewRef?.openModal(task.id, 'edit')"
+              @task-delete="handleDeleteTaskById"
+              @task-favorite="onToggleFavorite"
+              @task-mark-done="onMarkAsDone"
+              @retry-load="loadAllTasks"
+          />
         </div>
+
+        <!-- Users Management (Admin only) -->
         <div v-else-if="activeTab === 'users'">
-          <p class="text-gray-500">User management section.</p>
+          <div class="mb-6">
+            <h3 class="text-xl font-semibold text-color">User Management</h3>
+            <p class="text-secondary">Manage system users and permissions</p>
+          </div>
+          <div class="bg-secondary-color rounded-lg p-8 text-center">
+            <Users class="w-12 h-12 mx-auto text-gray-400 mb-4" />
+            <p class="text-secondary">User management features coming soon...</p>
+          </div>
         </div>
+
+        <!-- Search Results -->
         <div v-else-if="activeTab === 'search'">
-          <p class="text-gray-500">Search results will show here.</p>
+          <div class="mb-6">
+            <h3 class="text-xl font-semibold text-color">Search Tasks</h3>
+            <p class="text-secondary">Find tasks across all categories</p>
+          </div>
+          <div class="bg-secondary-color rounded-lg p-8 text-center">
+            <Search class="w-12 h-12 mx-auto text-gray-400 mb-4" />
+            <p class="text-secondary">Search functionality coming soon...</p>
+          </div>
         </div>
       </main>
     </div>
+
+    <!-- Modals -->
+    <ProfileView ref="profileViewRef" />
+    <CategoryView
+        ref="categoryViewRef"
+        @category-created="handleCreateCategory"
+        @category-updated="handleUpdateCategory"
+        @category-deleted="handleDeleteCategory"
+    />
+    <TasksView
+        ref="taskViewRef"
+        @task-created="handleCreateTask"
+        @task-updated="handleUpdateTask"
+        @task-deleted="handleDeleteTask"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import {
   Calendar,
-  ChevronDown,
+  Grid3X3,
+  List,
+  Loader2,
   Plus,
+  RefreshCw,
   Search,
+  Settings,
   Star,
   Users
 } from "lucide-vue-next"
 
-import {useMainLayout} from "../composables/useMainLayout.ts";
-import ThemeToggle from "../components/ThemeToggle.vue";
+import { ref } from "vue"
+import { useMainLayout } from "../composables/useMainLayout.ts"
+import ThemeToggle from "../components/ThemeToggle.vue"
+import ProfileView from "../pages/ProfileView.vue"
+import CategoryView from "../pages/CategoryView.vue"
+import TasksView from "../pages/TasksView.vue";
+import TaskList from "../components/TaskList.vue"
+import { useTaskView } from "../composables/useTaskView.ts"
+import { useCategoryView } from "../composables/useCategoryView.ts"
 
-defineEmits(["add-task"])
+const profileViewRef = ref()
+const categoryViewRef = ref()
+const taskViewRef = ref()
 
 const {
   activeTab,
   activeTabData,
-  showUserMenu,
-  todayTasksCount,
+  viewMode,
   categories,
-
+  favoriteTasks,
+  currentTasks,
+  allTasks,
+  todayTasksCount,
+  isLoadingCategories,
+  isLoadingTasks,
+  categoriesError,
+  tasksError,
   user,
   isAdmin,
   userInitials,
   activeTabTitle,
-
   setActiveTab,
   getTabClass,
-  toggleUserMenu,
-  handleLogout,
+  refreshData,
+  loadCategories,
+  loadTodayTasks,
+  loadAllTasks,
+  onMarkAsDone,
+  onToggleFavorite
 } = useMainLayout()
+
+const {
+  handleCreateTask,
+  handleUpdateTask,
+  handleDeleteTask,
+  handleDeleteTaskById
+} = useTaskView()
+
+const {
+  handleCreateCategory,
+  handleUpdateCategory,
+  handleDeleteCategory,
+  lucideIconMap
+} = useCategoryView()
 </script>

@@ -1,19 +1,5 @@
 import api from './api';
-import type { User, ApiResponse } from '../types';
-
-interface UpdateProfileData {
-    username?: string;
-    email?: string;
-}
-
-interface ChangePasswordData {
-    currentPassword: string;
-    newPassword: string;
-}
-
-interface AdminChangePasswordData {
-    newPassword: string;
-}
+import type { UpdateProfileData, ChangePasswordData, AdminChangePasswordData, User, ApiResponse } from '../types';
 
 export const userService = {
     // ----- Current User -----

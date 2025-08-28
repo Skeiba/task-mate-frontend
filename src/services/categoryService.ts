@@ -1,4 +1,4 @@
-import type {ApiResponse, Category} from "../types";
+import type {ApiResponse, Category, CategoryRequest} from "../types";
 import api from "./api.ts";
 
 export const categoryService = {
@@ -8,13 +8,13 @@ export const categoryService = {
         return response.data;
     },
 
-    createCategory: async (name: string): Promise<ApiResponse<Category>> => {
-        const response = await api.post<ApiResponse<Category>>('/categories', name);
+    createCategory: async (category: CategoryRequest): Promise<ApiResponse<Category>> => {
+        const response = await api.post<ApiResponse<Category>>('/categories', category);
         return response.data;
     },
 
-    updateCategory: async (categoryId: string, name: string): Promise<ApiResponse<Category>> => {
-        const response = await api.put<ApiResponse<Category>>(`/categories/${categoryId}`, name);
+    updateCategory: async (categoryId: string, category: CategoryRequest): Promise<ApiResponse<Category>> => {
+        const response = await api.put<ApiResponse<Category>>(`/categories/${categoryId}`, category);
         return response.data;
     },
 

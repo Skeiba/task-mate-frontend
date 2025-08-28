@@ -11,7 +11,7 @@ const ResetPasswordView = () => import('../pages/auth/ResetPasswordView.vue')
 
 const DashboardView = () => import('../pages/DashboardView.vue')
 const TasksView = () => import('../pages/TasksView.vue')
-const CategoriesView = () => import('../pages/CategoriesView.vue')
+const CategoriesView = () => import('../pages/CategoryView.vue')
 const ProfileView = () => import('../pages/ProfileView.vue')
 
 const AdminUsersView = () => import('../pages/admin/UsersView.vue')

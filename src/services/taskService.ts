@@ -58,6 +58,15 @@ export const taskService = {
         return response.data;
     },
 
+    toggleFavorite: async(
+        taskId: string
+    ): Promise<ApiResponse<Task>> => {
+        const response = await api.patch<ApiResponse<Task>>(
+            `/tasks/${taskId}/toggle-favorite`,
+        )
+        return response.data;
+    },
+
     addCategories: async (
         taskId: string,
         categoryIds: string[]

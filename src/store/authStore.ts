@@ -42,15 +42,20 @@ export const useAuthStore = defineStore("authStore", {
             }
         },
 
-        async logout() {
+        async logout(redirectPath?: string) {
             this.isLoading = true;
             this.error = null;
             try {
                 await authService.logout();
-                router.replace({path: '/login'});
-            } catch {
-            } finally {
                 this.user = null;
+
+                if (redirectPath) {
+                    router.replace({ path: redirectPath });
+                }
+            } catch (err: any) {
+                console.error('Logout error:', err);
+                this.user = null;
+            } finally {
                 this.isLoading = false;
             }
         },
