@@ -246,7 +246,7 @@ export function useMainLayout() {
 
         return isActive
             ? "bg-blue-50 text-blue-700 border-blue-200"
-            : "text-gray-700 hover:bg-gray-50"
+            : "text-secondary hover-theme"
     }
 
     const toggleUserMenu = () => {

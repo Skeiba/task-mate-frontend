@@ -37,7 +37,7 @@
               class="hover:text-red-600 text-red-500 rounded-full transition-colors p-1"
               title="Delete task"
           >
-            <Trash2 class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
+            <Trash2 class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
           </button>
 
           <!-- Close Button -->
@@ -45,7 +45,7 @@
               @click="closeModal"
               class="hover:text-red-600 transition-colors p-1"
           >
-            <X class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
+            <X class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
           </button>
         </div>
       </div>
@@ -255,7 +255,7 @@
 
             <!-- Categories -->
             <div>
-              <label class="block text-xs sm:text-sm font-semibold text-secondary pt-1 sm:pt-2 mb-1 sm:mb-2">
+              <label class="block text-xs sm:text-sm font-semibold text-secondary  pt-1 sm:pt-2 mb-1 sm:mb-2">
                 Categories
               </label>
               <div class="flex flex-wrap gap-1 sm:gap-2">
@@ -265,19 +265,24 @@
                     type="button"
                     :disabled="isReadOnly"
                     @click="toggleCategory(category)"
-                    class="flex items-center px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-full border-2 transition-all duration-200 disabled:cursor-not-allowed"
+                    class="flex items-center px-2 sm:px-3 py-1 sm:py-2 text-xs sm:text-sm rounded-lg border-2 transition-all duration-200 disabled:cursor-not-allowed"
                     :class="[
                       isCategorySelected(category)
                         ? 'border-green-500 text-green-700 bg-green-50 shadow-sm'
-                        : 'border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-gray-50',
+                        : 'border-gray-200 text-color hover:border-gray-300 hover-theme',
                       isReadOnly && 'opacity-75'
                     ]"
                 >
-                  <span
-                      class="w-2 h-2 sm:w-3 sm:h-3 rounded-full mr-1 sm:mr-2 shadow-sm flex-shrink-0"
+                  <div
+                      class="w-6 h-6 rounded-full mr-2 flex items-center justify-center"
                       :style="{ backgroundColor: category.color || '#6B7280' }"
-                  />
-                  <span class="truncate max-w-[100px] sm:max-w-none">{{ category.name }}</span>
+                  >
+                    <component
+                        :is="lucideIconMap[category.icon] || lucideIconMap['briefcase']"
+                        class="w-3 h-3 text-white"
+                    />
+                  </div>
+                  <span class="truncate max-w-[100px]  sm:max-w-none">{{ category.name }}</span>
                   <Check v-if="isCategorySelected(category)" class="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 flex-shrink-0" />
                 </button>
                 <span v-if="availableCategories.length === 0" class="text-xs sm:text-sm text-secondary italic flex items-center">
@@ -288,11 +293,11 @@
             </div>
 
             <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-3 sm:pt-4 md:pt-6 border-t border-gray-100">
+            <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3 pt-3 sm:pt-4 md:pt-6">
               <button
                   type="button"
                   @click="closeModal"
-                  class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 border-2 border-gray-200 text-gray-700 rounded-lg sm:rounded-xl hover:bg-gray-50 transition-all duration-200 font-medium text-sm sm:text-base"
+                  class="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 border-2 border-gray-200 text-secondary rounded-lg sm:rounded-xl hover-theme transition-all duration-200 font-medium text-sm sm:text-base"
               >
                 {{ isReadOnly ? 'Close' : 'Cancel' }}
               </button>
@@ -311,27 +316,26 @@
         </div>
       </div>
     </div>
-
     <!-- Delete Confirmation Modal -->
     <div
         v-if="showDeleteConfirm"
         class="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-3 sm:p-4"
         @click.self="showDeleteConfirm = false"
     >
-      <div class="bg-white rounded-lg sm:rounded-xl shadow-2xl max-w-sm sm:max-w-md w-full p-4 sm:p-6">
+      <div class="bg-color rounded-lg sm:rounded-xl shadow-2xl max-w-sm sm:max-w-md w-full p-4 sm:p-6">
         <div class="flex items-center mb-3 sm:mb-4">
           <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-100 flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
             <AlertTriangle class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-red-600" />
           </div>
-          <h3 class="text-base sm:text-lg font-semibold text-gray-900">Delete Task</h3>
+          <h3 class="text-base sm:text-lg font-semibold text-color">Delete Task</h3>
         </div>
-        <p class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
+        <p class="text-sm sm:text-base text-secondary mb-4 sm:mb-6">
           Are you sure you want to delete "<span class="font-medium break-words">{{ currentTask?.title }}</span>"? This action cannot be undone.
         </p>
         <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
           <button
               @click="showDeleteConfirm = false"
-              class="w-full sm:w-auto px-3 sm:px-4 py-2 border-2 border-gray-200 text-gray-700 rounded-lg sm:rounded-xl hover:bg-gray-50 transition-all duration-200 font-medium text-sm sm:text-base"
+              class="w-full sm:w-auto px-3 sm:px-4 py-2 border-2 border-gray-200 text-color rounded-lg sm:rounded-xl hover-theme transition-all duration-200 font-medium text-sm sm:text-base"
           >
             Cancel
           </button>
@@ -365,6 +369,7 @@ import {
 
 import { useTaskView } from "../composables/useTaskView.ts"
 import { ref, onMounted, onUnmounted } from 'vue'
+import {useCategoryView} from "../composables/useCategoryView.ts";
 
 const showPriorityDropdown = ref(false)
 const showStatusDropdown = ref(false)
@@ -414,6 +419,8 @@ const {
   isCategorySelected,
   switchToEditMode,
 } = useTaskView()
+
+const {lucideIconMap} = useCategoryView()
 
 const handleClickOutside = (e: Event) => {
   const target = e.target as Element

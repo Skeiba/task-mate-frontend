@@ -78,11 +78,11 @@ export interface ResetPasswordData {
 
 export interface TaskRequest{
     title: string;
-    content: string;
+    content?: string;
     status: Task['status'];
     priority: Task['priority'];
     dueDate: string;
-    categoryIds: string[];
+    categoryIds?: string[];
     isFavorite: boolean;
 }
 

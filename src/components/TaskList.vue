@@ -70,14 +70,14 @@
         </div>
 
         <div class="flex items-center space-x-2 ml-4">
-          <!-- Mark as Done Button -->
           <button
-              v-if="task.status !== 'DONE'"
               @click.stop="handleMarkAsDone(task.id)"
-              class="p-1.5 hover:text-green-500 rounded transition-colors"
-              title="Mark as done"
+              class="p-1.5 rounded transition-colors"
+              :class="task.status === 'DONE' ? 'text-green-600 hover:text-green-700' : 'hover:text-green-500'"
+              :title="task.status === 'DONE' ? 'Completed' : 'Mark as done'"
           >
-            <CheckCircle class="w-5 h-5" />
+            <CheckCheck v-if="task.status === 'DONE'" class="w-5 h-5" />
+            <Check v-else class="w-4 h-4" />
           </button>
 
           <button
@@ -85,7 +85,7 @@
               class="p-1.5 hover:text-blue-500 rounded transition-colors"
               title="Edit task"
           >
-            <Edit class="w-5 h-5" />
+            <Edit class="w-4 h-4" />
           </button>
 
           <button
@@ -94,7 +94,7 @@
               :class="task.isFavorite ? 'text-yellow-500 hover:text-yellow-600' : 'hover:text-yellow-500'"
               title="Toggle favorite"
           >
-            <Star class="w-5 h-5" :class="{ 'fill-current': task.isFavorite }" />
+            <Star class="w-4 h-4" :class="{ 'fill-current': task.isFavorite }" />
           </button>
 
           <button
@@ -102,7 +102,7 @@
               class="p-1.5 hover:text-red-600 rounded transition-colors"
               title="Delete task"
           >
-            <Trash2 class="w-5 h-5" />
+            <Trash2 class="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -114,45 +114,45 @@
     <div
         v-for="task in tasks"
         :key="task.id"
-        class="bg-secondary-color rounded-lg p-4 border border-gray-200 hover:border-gray-300 transition-colors cursor-pointer"
+        class="bg-secondary-color rounded-lg p-4 hover-theme transition-colors cursor-pointer"
         @click="$emit('task-click', task)"
     >
       <div class="flex items-start justify-between mb-3">
         <h3 class="font-medium text-color line-clamp-2">{{ task.title }}</h3>
         <div class="flex items-center space-x-1 ml-2">
-          <!-- Mark as Done Button -->
           <button
-              v-if="task.status !== 'DONE'"
               @click.stop="handleMarkAsDone(task.id)"
-              class="p-1 hover:bg-green-100 hover:text-green-600 rounded transition-colors"
-              title="Mark as done"
+              class="p-1.5 rounded transition-colors"
+              :class="task.status === 'DONE' ? 'text-green-600 hover:text-green-700' : 'hover:text-green-500'"
+              :title="task.status === 'DONE' ? 'Completed' : 'Mark as done'"
           >
-            <CheckCircle class="w-3 h-3" />
+            <CheckCheck v-if="task.status === 'DONE'" class="w-5 h-5" />
+            <Check v-else class="w-4 h-4" />
           </button>
 
           <button
               @click.stop="$emit('task-edit', task)"
-              class="p-1 hover:bg-gray-200 rounded transition-colors"
+              class="p-1.5 hover:text-blue-500 rounded transition-colors"
               title="Edit task"
           >
-            <Edit class="w-3 h-3" />
+            <Edit class="w-4 h-4" />
           </button>
 
           <button
               @click.stop="handleToggleFavorite(task.id)"
-              class="p-1 rounded transition-colors"
-              :class="task.isFavorite ? 'text-yellow-500 hover:bg-yellow-100' : 'hover:bg-yellow-100 hover:text-yellow-500'"
+              class="p-1.5 rounded transition-colors"
+              :class="task.isFavorite ? 'text-yellow-500 hover:text-yellow-600' : 'hover:text-yellow-500'"
               title="Toggle favorite"
           >
-            <Star class="w-3 h-3" :class="{ 'fill-current': task.isFavorite }" />
+            <Star class="w-4 h-4" :class="{ 'fill-current': task.isFavorite }" />
           </button>
 
           <button
               @click.stop="showDeleteConfirm(task)"
-              class="p-1 hover:bg-red-100 hover:text-red-600 rounded transition-colors"
+              class="p-1.5 hover:text-red-600 rounded transition-colors"
               title="Delete task"
           >
-            <Trash2 class="w-3 h-3" />
+            <Trash2 class="w-4 h-4" />
           </button>
         </div>
       </div>
@@ -195,21 +195,21 @@
       class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-60 p-3 sm:p-4"
       @click.self="cancelDelete"
   >
-    <div class="bg-white rounded-lg sm:rounded-xl shadow-2xl max-w-sm sm:max-w-md w-full p-4 sm:p-6">
+    <div class="bg-color rounded-lg sm:rounded-xl shadow-2xl max-w-sm sm:max-w-md w-full p-4 sm:p-6">
       <div class="flex items-center mb-3 sm:mb-4">
         <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-100 flex items-center justify-center mr-2 sm:mr-3 flex-shrink-0">
           <AlertTriangle class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-red-600" />
         </div>
-        <h3 class="text-base sm:text-lg font-semibold text-gray-900">Delete Task</h3>
+        <h3 class="text-base sm:text-lg font-semibold text-color">Delete Task</h3>
       </div>
-      <p class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">
+      <p class="text-sm sm:text-base text-secondary mb-4 sm:mb-6">
         Are you sure you want to delete "<span class="font-medium break-words">{{ deleteTaskToConfirm?.title }}</span>"? This action cannot be undone.
       </p>
       <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
         <button
             @click="cancelDelete"
             :disabled="isDeleting"
-            class="w-full sm:w-auto px-3 sm:px-4 py-2 border-2 border-gray-200 text-gray-700 rounded-lg sm:rounded-xl hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium text-sm sm:text-base"
+            class="w-full sm:w-auto px-3 sm:px-4 py-2 border-2 border-gray-200 text-color rounded-lg sm:rounded-xl hover-theme disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium text-sm sm:text-base"
         >
           Cancel
         </button>
@@ -232,8 +232,9 @@ import {
   AlertCircle,
   AlertTriangle,
   Calendar,
-  CheckCircle,
   CheckSquare,
+  Check,
+  CheckCheck,
   Edit,
   Loader2,
   Tag,
@@ -262,7 +263,6 @@ const emit = defineEmits<{
   'retry-load': []
 }>()
 
-// State for delete confirmation
 const deleteTaskToConfirm = ref<Task | null>(null)
 const isDeleting = ref(false)
 

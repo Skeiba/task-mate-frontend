@@ -355,7 +355,7 @@ export function useTaskView() {
             throw error
         }
     }
-    
+
     const handleDeleteTask = async () => {
         if (!currentTask.value) return
 
