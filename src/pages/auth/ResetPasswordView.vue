@@ -36,7 +36,7 @@
             </label>
             <div class="flex gap-2 justify-center">
               <input
-                  v-for="(digit, index) in tokenDigits"
+                  v-for="(_, index) in tokenDigits"
                   :key="index"
                   :id="`token-${index}`"
                   v-model="tokenDigits[index]"

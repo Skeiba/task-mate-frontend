@@ -99,3 +99,24 @@ export interface ChangePasswordData {
 export interface AdminChangePasswordData {
     newPassword: string;
 }
+
+export interface ChatMessage {
+    id: string
+    type: 'user' | 'ai'
+    content: string
+    timestamp: Date
+    isLoading?: boolean
+    taskCreated?: boolean
+    taskId?: string
+    error?: boolean
+}
+
+export interface Summary {
+    id: string
+    type: 'daily' | 'all' | 'selected'
+    title: string
+    content: string
+    timestamp: Date
+    date?: string
+    taskIds?: string[]
+}

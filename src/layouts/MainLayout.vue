@@ -203,6 +203,7 @@
               @task-delete="handleDeleteTaskById"
               @task-favorite="onToggleFavorite"
               @task-mark-done="onMarkAsDone"
+              @task-categorize="handleCategorizeTaskById"
               @retry-load="loadTodayTasks"
           />
         </div>
@@ -242,6 +243,7 @@
               @task-delete="handleDeleteTaskById"
               @task-favorite="onToggleFavorite"
               @task-mark-done="onMarkAsDone"
+              @task-categorize="handleCategorizeTaskById"
               @retry-load="loadAllTasks"
           />
         </div>
@@ -282,6 +284,7 @@
               @task-delete="handleDeleteTaskById"
               @task-favorite="onToggleFavorite"
               @task-mark-done="onMarkAsDone"
+              @task-categorize="handleCategorizeTaskById"
               @retry-load="loadAllTasks"
           />
         </div>
@@ -322,6 +325,7 @@
               @task-delete="handleDeleteTaskById"
               @task-favorite="onToggleFavorite"
               @task-mark-done="onMarkAsDone"
+              @task-categorize="handleCategorizeTaskById"
               @retry-load="loadAllTasks"
           />
         </div>
@@ -463,6 +467,7 @@
               @task-delete="handleDeleteTaskById"
               @task-favorite="onToggleFavorite"
               @task-mark-done="onMarkAsDone"
+              @task-categorize="handleCategorizeTaskById"
               @retry-load="loadAllTasks"
           />
 
@@ -496,6 +501,7 @@
         @task-updated="handleUpdateTask"
         @task-deleted="handleDeleteTask"
     />
+    <AiChatView/>
   </div>
 </template>
 
@@ -510,7 +516,8 @@ import {
   Search,
   Settings,
   Star,
-  Users
+  Users,
+  X
 } from "lucide-vue-next"
 
 import { ref } from "vue"
@@ -523,6 +530,7 @@ import TaskList from "../components/TaskList.vue"
 import { useTaskView } from "../composables/useTaskView.ts"
 import { useCategoryView } from "../composables/useCategoryView.ts"
 import {useSearch} from "../composables/useSearch.ts";
+import AiChatView from "../pages/AiChatView.vue";
 
 const profileViewRef = ref()
 const categoryViewRef = ref()
@@ -559,6 +567,7 @@ const {
   handleCreateTask,
   handleUpdateTask,
   handleDeleteTask,
+  handleCategorizeTaskById,
   handleDeleteTaskById
 } = useTaskView()
 

@@ -3,6 +3,7 @@ import { taskService} from "../services/taskService.ts";
 import { categoryService } from "../services/categoryService.ts"
 import type { Task, TaskRequest, Category } from "../types"
 import {AlertCircle, CheckCircle, Circle, Clock, XCircle} from "lucide-vue-next";
+import {aiService} from "../services/aiService.ts";
 
 export function useTaskView() {
     // Modal state
@@ -218,6 +219,7 @@ export function useTaskView() {
             if (response.success && response.data) {
                 currentTask.value = response.data
                 populateForm(response.data)
+
             }
         } catch (error) {
             console.error('Failed to load task:', error)
@@ -233,6 +235,7 @@ export function useTaskView() {
 
             if (response.success && response.data) {
                 availableCategories.value = response.data
+
             }
         } catch (error) {
             console.error('Failed to load categories:', error)
@@ -346,9 +349,30 @@ export function useTaskView() {
         }
     }
 
+    const handleCategorizeTaskById = async (taskId: string) => {
+        try {
+            isLoading.value = true
+            const response = await aiService.categorizeTask(taskId)
+            if (response.success && response.data) {
+                successMessage.value = 'Task categorized successfully!'
+
+                setTimeout(() => {
+                    closeModal()
+                }, 1500)
+            }
+        } catch (error) {
+            console.error('Task categorize failed:', error)
+            errorMessage.value = 'Failed to categorize task. Please try again.'
+            throw error
+        } finally {
+            isLoading.value = false
+        }
+    }
+
     const handleDeleteTaskById = async (taskId: string) => {
         try {
             await taskService.deleteTask(taskId)
+
             return { success: true }
         } catch (error) {
             console.error('Task deletion failed:', error)
@@ -367,6 +391,7 @@ export function useTaskView() {
 
             if (result.success) {
                 successMessage.value = 'Task deleted successfully!'
+
                 setTimeout(() => {
                     closeModal()
                 }, 1500)
@@ -377,7 +402,6 @@ export function useTaskView() {
             isLoading.value = false
         }
     }
-
 
     const handleStatusChange = async (newStatus: string) => {
         if (!currentTask.value || isReadOnly.value) return
@@ -390,6 +414,7 @@ export function useTaskView() {
                 currentTask.value = response.data
                 taskForm.value.status = newStatus as any
                 successMessage.value = 'Task status updated!'
+
             }
         } catch (error) {
             console.error('Status change failed:', error)
@@ -410,6 +435,7 @@ export function useTaskView() {
                 currentTask.value = response.data
                 taskForm.value.priority = newPriority as any
                 successMessage.value = 'Task priority updated!'
+
             }
         } catch (error) {
             console.error('Priority change failed:', error)
@@ -486,7 +512,6 @@ export function useTaskView() {
         errorMessage.value = ''
     }
 
-    // Watch for category changes to update categoryIds
     watch(selectedCategories, (newCategories) => {
         taskForm.value.categoryIds = newCategories.map(cat => cat.id)
     }, { deep: true })
@@ -539,6 +564,7 @@ export function useTaskView() {
         handleCreateTask,
         handleUpdateTask,
         handleDeleteTask,
+        handleCategorizeTaskById,
         handleStatusChange,
         handlePriorityChange,
         handleToggleFavorite,

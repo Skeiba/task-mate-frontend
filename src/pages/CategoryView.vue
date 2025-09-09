@@ -104,7 +104,7 @@
             </div>
 
             <!-- Categories Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div
                   v-for="category in displayedCategories"
                   :key="category.id"
@@ -415,11 +415,6 @@ const {
   handleDeleteCategory,
   selectCategoryForEdit
 } = useCategoryView()
-
-const formatDate = (dateString: string | undefined) => {
-  if (!dateString) return 'Unknown'
-  return new Date(dateString).toLocaleDateString()
-}
 
 defineExpose({
   openModal

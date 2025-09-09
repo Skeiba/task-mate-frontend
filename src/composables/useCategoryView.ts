@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
-import { categoryService } from "../services/categoryService.ts"
-import type { Category, CategoryRequest } from "../types"
+import { categoryService } from '../services/categoryService'
+import type { Category, CategoryRequest } from '../types'
 import {
     Briefcase,
     User,
@@ -12,19 +12,49 @@ import {
     Music,
     Camera,
     Phone
-} from "lucide-vue-next"
+} from 'lucide-vue-next'
 
-const lucideIconMap: Record<string, any> = {
-    "briefcase": Briefcase,
-    "user": User,
-    "shopping-cart": ShoppingCart,
-    "heart": Heart,
-    "home": Home,
-    "car": Car,
-    "book": Book,
-    "music": Music,
-    "camera": Camera,
-    "phone": Phone
+// Constants
+const LUCIDE_ICON_MAP: Record<string, any> = {
+    'briefcase': Briefcase,
+    'user': User,
+    'shopping-cart': ShoppingCart,
+    'heart': Heart,
+    'home': Home,
+    'car': Car,
+    'book': Book,
+    'music': Music,
+    'camera': Camera,
+    'phone': Phone
+}
+
+const PREDEFINED_COLORS = [
+    '#3B82F6', // Blue
+    '#10B981', // Green
+    '#F59E0B', // Yellow
+    '#EF4444', // Red
+    '#8B5CF6', // Purple
+    '#F97316', // Orange
+    '#06B6D4', // Cyan
+    '#84CC16', // Lime
+    '#EC4899', // Pink
+    '#6B7280'  // Gray
+]
+
+const DEFAULT_ICONS = [
+    'briefcase', 'user', 'shopping-cart', 'heart',
+    'home', 'car', 'book', 'music', 'camera', 'phone'
+]
+
+const DEFAULT_FORM_VALUES = {
+    name: '',
+    icon: 'briefcase',
+    color: '#3B82F6'
+}
+
+const VALIDATION_RULES = {
+    MIN_NAME_LENGTH: 2,
+    MAX_NAME_LENGTH: 50
 }
 
 export function useCategoryView() {
@@ -32,47 +62,31 @@ export function useCategoryView() {
     const showModal = ref(false)
     const activeTab = ref<'list' | 'create' | 'edit'>('list')
     const isLoading = ref(false)
+
+    // Messages
     const successMessage = ref('')
     const errorMessage = ref('')
 
-    // Categories data
+    // Data
     const categories = ref<Category[]>([])
     const selectedCategory = ref<Category | null>(null)
     const allowedIcons = ref<string[]>([])
+    const filteredCategories = ref('')
 
-    // Form data
-    const categoryForm = ref({
-        name: '',
-        icon: 'briefcase', // Set default icon
-        color: '#3B82F6'
-    })
-
-    // Form validation errors
+    // Form
+    const categoryForm = ref({ ...DEFAULT_FORM_VALUES })
     const formErrors = ref<Partial<Record<keyof typeof categoryForm.value, string>>>({})
-
-    // Predefined colors for categories
-    const predefinedColors = [
-        '#3B82F6', // Blue
-        '#10B981', // Green
-        '#F59E0B', // Yellow
-        '#EF4444', // Red
-        '#8B5CF6', // Purple
-        '#F97316', // Orange
-        '#06B6D4', // Cyan
-        '#84CC16', // Lime
-        '#EC4899', // Pink
-        '#6B7280'  // Gray
-    ]
 
     // Computed properties
     const isFormValid = computed(() => {
-        return categoryForm.value.name &&
+        return Boolean(
+            categoryForm.value.name &&
             categoryForm.value.color &&
             categoryForm.value.icon &&
             Object.keys(formErrors.value).length === 0
+        )
     })
 
-    const filteredCategories = ref('')
     const displayedCategories = computed(() => {
         if (!filteredCategories.value) return categories.value
 
@@ -81,88 +95,46 @@ export function useCategoryView() {
         )
     })
 
-    // Methods
-    const openModal = async () => {
-        showModal.value = true
-        activeTab.value = 'list'
-        await Promise.all([
-            loadCategories(),
-            loadAllowedIcons()
-        ])
-        clearMessages()
-    }
-
-    const closeModal = () => {
-        showModal.value = false
-        resetForm()
-        clearMessages()
-        selectedCategory.value = null
-        filteredCategories.value = ''
-    }
-
-    const setActiveTab = (tab: 'list' | 'create' | 'edit') => {
-        activeTab.value = tab
-        clearMessages()
-
-        if (tab === 'create') {
-            resetForm()
-        } else if (tab === 'edit' && selectedCategory.value) {
-            populateForm(selectedCategory.value)
-        }
-    }
-
-    const loadCategories = async () => {
-        try {
-            isLoading.value = true
-            const response = await categoryService.getAllCategories()
-
-            if (response.success && response.data) {
-                categories.value = response.data
-            }
-        } catch (error) {
-            console.error('Failed to load categories:', error)
-            errorMessage.value = 'Failed to load categories'
-        } finally {
-            isLoading.value = false
-        }
-    }
-
-    const loadAllowedIcons = async () => {
-        try {
-            const response = await categoryService.getAllowedIcons()
-
-            if (response.success && response.data) {
-                allowedIcons.value = response.data as string[]
-            }
-        } catch (error) {
-            console.error('Failed to load icons:', error)
-            allowedIcons.value = [
-                'briefcase', 'user', 'shopping-cart', 'heart',
-                'home', 'car', 'book', 'music', 'camera', 'phone'
-            ]
-        }
-    }
-
     const allowedLucideIcons = computed(() =>
         allowedIcons.value.map(name => ({
             name,
-            icon: lucideIconMap[name] || lucideIconMap["briefcase"] // fallback
+            icon: LUCIDE_ICON_MAP[name] || LUCIDE_ICON_MAP.briefcase
         }))
     )
 
-    const validateForm = () => {
-        formErrors.value = {}
+    // Utility methods
+    const clearMessages = () => {
+        successMessage.value = ''
+        errorMessage.value = ''
+    }
 
-        if (!categoryForm.value.name) {
+    const resetForm = () => {
+        categoryForm.value = { ...DEFAULT_FORM_VALUES }
+        formErrors.value = {}
+    }
+
+    const populateForm = (category: Category) => {
+        categoryForm.value = {
+            name: category.name,
+            icon: category.icon || DEFAULT_FORM_VALUES.icon,
+            color: category.color || DEFAULT_FORM_VALUES.color
+        }
+    }
+
+    // Validation
+    const validateForm = (): boolean => {
+        formErrors.value = {}
+        const { name } = categoryForm.value
+
+        if (!name) {
             formErrors.value.name = 'Category name is required'
-        } else if (categoryForm.value.name.length < 2) {
-            formErrors.value.name = 'Category name must be at least 2 characters'
-        } else if (categoryForm.value.name.length > 50) {
-            formErrors.value.name = 'Category name must be less than 50 characters'
+        } else if (name.length < VALIDATION_RULES.MIN_NAME_LENGTH) {
+            formErrors.value.name = `Category name must be at least ${VALIDATION_RULES.MIN_NAME_LENGTH} characters`
+        } else if (name.length > VALIDATION_RULES.MAX_NAME_LENGTH) {
+            formErrors.value.name = `Category name must be less than ${VALIDATION_RULES.MAX_NAME_LENGTH} characters`
         } else {
-            // Check for duplicate names (excluding current category if editing)
             const isDuplicate = categories.value.some(cat =>
-                cat.name.toLowerCase() === categoryForm.value.name.toLowerCase() &&
+                cat.name.toLowerCase() === name.toLowerCase() &&
                 cat.id !== selectedCategory.value?.id
             )
 
@@ -182,33 +154,58 @@ export function useCategoryView() {
         return Object.keys(formErrors.value).length === 0
     }
 
-    const handleCreateCategory = async () => {
+    // API methods
+    const loadCategories = async (): Promise<void> => {
+        try {
+            isLoading.value = true
+            const response = await categoryService.getAllCategories()
+
+            if (response.success && response.data) {
+                categories.value = response.data
+            }
+        } catch (error) {
+            console.error('Failed to load categories:', error)
+            errorMessage.value = 'Failed to load categories'
+        } finally {
+            isLoading.value = false
+        }
+    }
+
+    const loadAllowedIcons = async (): Promise<void> => {
+        try {
+            const response = await categoryService.getAllowedIcons()
+
+            if (response.success && response.data) {
+                allowedIcons.value = response.data as string[]
+            }
+        } catch (error) {
+            console.error('Failed to load icons:', error)
+            allowedIcons.value = DEFAULT_ICONS
+        }
+    }
+
+    const createCategoryRequest = (): CategoryRequest => ({
+        name: categoryForm.value.name,
+        icon: categoryForm.value.icon,
+        color: categoryForm.value.color
+    })
+
+    const handleCreateCategory = async (): Promise<void> => {
         if (!validateForm()) return
 
         try {
             isLoading.value = true
             clearMessages()
 
-            // Create category request object with all form fields
-            const categoryRequest : CategoryRequest = {
-                name: categoryForm.value.name,
-                icon: categoryForm.value.icon,
-                color: categoryForm.value.color
-            }
-
-            console.log('Creating category with data:', categoryRequest) // Debug log
-
+            const categoryRequest = createCategoryRequest()
             const response = await categoryService.createCategory(categoryRequest)
 
             if (response.success && response.data) {
                 categories.value.push(response.data)
                 successMessage.value = 'Category created successfully!'
-
                 resetForm()
 
-                setTimeout(() => {
-                    setActiveTab('list')
-                }, 2000)
+                setTimeout(() => setActiveTab('list'), 2000)
             }
         } catch (error) {
             console.error('Category creation failed:', error)
@@ -218,22 +215,14 @@ export function useCategoryView() {
         }
     }
 
-    const handleUpdateCategory = async () => {
+    const handleUpdateCategory = async (): Promise<void> => {
         if (!selectedCategory.value || !validateForm()) return
 
         try {
             isLoading.value = true
             clearMessages()
 
-            // Create category request object with all form fields
-            const categoryRequest : CategoryRequest = {
-                name: categoryForm.value.name,
-                icon: categoryForm.value.icon,
-                color: categoryForm.value.color
-            }
-
-            console.log('Updating category with data:', categoryRequest) // Debug log
-
+            const categoryRequest = createCategoryRequest()
             const response = await categoryService.updateCategory(
                 selectedCategory.value.id,
                 categoryRequest
@@ -248,10 +237,7 @@ export function useCategoryView() {
                 successMessage.value = 'Category updated successfully!'
                 selectedCategory.value = response.data
 
-                // Auto switch to list view after 2 seconds
-                setTimeout(() => {
-                    setActiveTab('list')
-                }, 2000)
+                setTimeout(() => setActiveTab('list'), 2000)
             }
         } catch (error) {
             console.error('Category update failed:', error)
@@ -261,10 +247,12 @@ export function useCategoryView() {
         }
     }
 
-    const handleDeleteCategory = async (category: Category) => {
-        if (!confirm(`Are you sure you want to delete "${category.name}"? This action cannot be undone.`)) {
-            return
-        }
+    const handleDeleteCategory = async (category: Category): Promise<void> => {
+        const confirmed = confirm(
+            `Are you sure you want to delete "${category.name}"? This action cannot be undone.`
+        )
+
+        if (!confirmed) return
 
         try {
             isLoading.value = true
@@ -287,32 +275,40 @@ export function useCategoryView() {
         }
     }
 
+    const openModal = async (): Promise<void> => {
+        showModal.value = true
+        activeTab.value = 'list'
+        clearMessages()
+
+        await Promise.all([
+            loadCategories(),
+            loadAllowedIcons()
+        ])
+    }
+
+    const closeModal = () => {
+        showModal.value = false
+        resetForm()
+        clearMessages()
+        selectedCategory.value = null
+        filteredCategories.value = ''
+    }
+
+    const setActiveTab = (tab: 'list' | 'create' | 'edit') => {
+        activeTab.value = tab
+        clearMessages()
+
+        if (tab === 'create') {
+            resetForm()
+        } else if (tab === 'edit' && selectedCategory.value) {
+            populateForm(selectedCategory.value)
+        }
+    }
+
     const selectCategoryForEdit = (category: Category) => {
         selectedCategory.value = category
         populateForm(category)
         setActiveTab('edit')
-    }
-
-    const populateForm = (category: Category) => {
-        categoryForm.value = {
-            name: category.name,
-            icon: category.icon || 'briefcase',
-            color: category.color || '#3B82F6'
-        }
-    }
-
-    const resetForm = () => {
-        categoryForm.value = {
-            name: '',
-            icon: 'briefcase', // Set default icon
-            color: '#3B82F6'
-        }
-        formErrors.value = {}
-    }
-
-    const clearMessages = () => {
-        successMessage.value = ''
-        errorMessage.value = ''
     }
 
     return {
@@ -325,15 +321,15 @@ export function useCategoryView() {
         categories,
         selectedCategory,
         allowedIcons,
+        filteredCategories,
 
         // Form
         categoryForm,
         formErrors,
-        filteredCategories,
 
         // Constants
-        predefinedColors,
-        lucideIconMap,
+        predefinedColors: PREDEFINED_COLORS,
+        lucideIconMap: LUCIDE_ICON_MAP,
 
         // Computed
         isFormValid,
