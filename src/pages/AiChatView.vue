@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- Toggle Button -->
     <button
         @click="toggleSidebar"
         :class="[
@@ -311,7 +310,6 @@ const {
   expandedSummary,
   copiedId,
 
-  sendMessage,
   sendAiMessage,
   quickSummarizeToday,
   quickSummarizeAll,

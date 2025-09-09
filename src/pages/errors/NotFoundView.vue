@@ -1,14 +1,12 @@
 <template>
   <div class="min-h-screen bg-color flex items-center justify-center p-4">
     <div class="max-w-md w-full text-center">
-      <!-- Icon -->
       <div class="mb-8">
         <div class="mx-auto w-20 h-20 sm:w-24 sm:h-24 bg-gray-100 rounded-full flex items-center justify-center">
           <Search class="w-10 h-10 sm:w-12 sm:h-12 text-gray-600" />
         </div>
       </div>
 
-      <!-- Content -->
       <div class="mb-8">
         <h1 class="text-6xl sm:text-7xl font-bold text-color mb-4">
           404
@@ -21,7 +19,6 @@
         </p>
       </div>
 
-      <!-- Actions -->
       <div class="space-y-3 sm:space-y-4">
         <button
             @click="goHome"

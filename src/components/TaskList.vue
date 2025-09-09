@@ -310,7 +310,6 @@ const isDeleting = ref(false)
 const isProcessing = ref(false)
 const categorizingTaskId = ref<string | null>(null)
 
-// Action message state
 const actionMessage = ref({
   show: false,
   type: 'success' as 'success' | 'error',
@@ -417,12 +416,10 @@ const handleCategorizeTask = async (taskId: string) => {
     isProcessing.value = true
     categorizingTaskId.value = taskId
 
-    // Use the composable function directly
     const { handleCategorizeTaskById } = useTaskView()
 
     await handleCategorizeTaskById(taskId)
 
-    // Emit the event for parent component to refresh data
     emit('task-categorize', taskId)
 
     showActionMessage('success', 'Task categorized successfully!')

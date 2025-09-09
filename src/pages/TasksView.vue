@@ -30,7 +30,6 @@
             <Edit class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
           </button>
 
-          <!-- Delete Button -->
           <button
               v-if="(mode === 'edit' || mode === 'view') && currentTask"
               @click="showDeleteConfirm = true"
@@ -40,7 +39,6 @@
             <Trash2 class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />
           </button>
 
-          <!-- Close Button -->
           <button
               @click="closeModal"
               class="hover:text-red-600 transition-colors p-1"
@@ -52,7 +50,6 @@
 
       <!-- Modal Body -->
       <div class="bg-color m-1 sm:m-2 overflow-hidden rounded-lg sm:rounded-xl" style="height: calc(85vh - 80px); max-height: calc(85vh - 80px);">
-        <!-- Success/Error Messages -->
         <div v-if="successMessage || errorMessage" class="px-3 sm:px-4 md:px-6 pb-2 sm:pb-4">
           <div
               v-if="successMessage"
@@ -72,7 +69,6 @@
 
         <div class="px-3 sm:px-4 md:px-6 pb-3 sm:pb-4 md:pb-6 space-y-3 sm:space-y-4 md:space-y-6 overflow-y-auto" style="height: calc(100% - 60px);">
           <form @submit.prevent="mode === 'create' ? handleCreateTask() : handleUpdateTask()">
-            <!-- Task Title -->
             <div>
               <label for="title" class="block pt-1 sm:pt-2 text-xs sm:text-sm font-semibold text-secondary mb-1 sm:mb-2">
                 Task Title
@@ -92,7 +88,6 @@
               </p>
             </div>
 
-            <!-- Task Description -->
             <div>
               <label for="content" class="block pt-1 sm:pt-2 text-xs sm:text-sm font-semibold text-secondary mb-1 sm:mb-2">
                 Description
@@ -114,7 +109,6 @@
 
             <!-- Priority, Status and Due Date Row -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-1 sm:mt-2 gap-3 sm:gap-4 md:gap-6">
-              <!-- Priority Dropdown -->
               <div class="relative">
                 <label class="block text-xs sm:text-sm font-semibold text-secondary mb-1 sm:mb-2">
                   Priority
@@ -385,20 +379,16 @@ const {
   showDeleteConfirm,
   showDatePicker,
 
-  // Form
   taskForm,
   formErrors,
 
-  // Constants
   priorityOptions,
   statusOptions,
 
-  // Computed
   isFormValid,
   modalTitle,
   isReadOnly,
 
-  // Helper methods
   getStatusIcon,
   getStatusColor,
   getStatusLabel,
@@ -409,7 +399,6 @@ const {
   selectPriority,
   formatDateTime,
 
-  // Methods
   openModal,
   closeModal,
   handleCreateTask,

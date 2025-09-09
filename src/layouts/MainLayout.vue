@@ -330,7 +330,7 @@
           />
         </div>
 
-        <!-- Users Management -->
+        <!-- Users Management: for implementing this use the same logic as taskView and taskList but for users-->
         <div v-else-if="activeTab === 'users'">
           <div class="mb-6">
             <h3 class="text-xl font-semibold text-color">User Management</h3>

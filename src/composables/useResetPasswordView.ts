@@ -34,7 +34,7 @@ export function useResetPasswordView() {
         errors.value = {};
 
         const token = tokenDigits.value.join("");
-        form.value.token = token; // keep token in sync
+        form.value.token = token;
 
         if (!token) {
             errors.value.token = "Reset code is required";

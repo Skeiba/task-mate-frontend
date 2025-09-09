@@ -14,7 +14,6 @@ import {
     Phone
 } from 'lucide-vue-next'
 
-// Constants
 const LUCIDE_ICON_MAP: Record<string, any> = {
     'briefcase': Briefcase,
     'user': User,
@@ -29,16 +28,16 @@ const LUCIDE_ICON_MAP: Record<string, any> = {
 }
 
 const PREDEFINED_COLORS = [
-    '#3B82F6', // Blue
-    '#10B981', // Green
-    '#F59E0B', // Yellow
-    '#EF4444', // Red
-    '#8B5CF6', // Purple
-    '#F97316', // Orange
-    '#06B6D4', // Cyan
-    '#84CC16', // Lime
-    '#EC4899', // Pink
-    '#6B7280'  // Gray
+    '#3B82F6',
+    '#10B981',
+    '#F59E0B',
+    '#EF4444',
+    '#8B5CF6',
+    '#F97316',
+    '#06B6D4',
+    '#84CC16',
+    '#EC4899',
+    '#6B7280'
 ]
 
 const DEFAULT_ICONS = [
@@ -58,26 +57,21 @@ const VALIDATION_RULES = {
 }
 
 export function useCategoryView() {
-    // Modal state
     const showModal = ref(false)
     const activeTab = ref<'list' | 'create' | 'edit'>('list')
     const isLoading = ref(false)
 
-    // Messages
     const successMessage = ref('')
     const errorMessage = ref('')
 
-    // Data
     const categories = ref<Category[]>([])
     const selectedCategory = ref<Category | null>(null)
     const allowedIcons = ref<string[]>([])
     const filteredCategories = ref('')
 
-    // Form
     const categoryForm = ref({ ...DEFAULT_FORM_VALUES })
     const formErrors = ref<Partial<Record<keyof typeof categoryForm.value, string>>>({})
 
-    // Computed properties
     const isFormValid = computed(() => {
         return Boolean(
             categoryForm.value.name &&
@@ -102,7 +96,6 @@ export function useCategoryView() {
         }))
     )
 
-    // Utility methods
     const clearMessages = () => {
         successMessage.value = ''
         errorMessage.value = ''
@@ -121,7 +114,6 @@ export function useCategoryView() {
         }
     }
 
-    // Validation
     const validateForm = (): boolean => {
         formErrors.value = {}
         const { name } = categoryForm.value
@@ -154,7 +146,6 @@ export function useCategoryView() {
         return Object.keys(formErrors.value).length === 0
     }
 
-    // API methods
     const loadCategories = async (): Promise<void> => {
         try {
             isLoading.value = true
@@ -312,7 +303,6 @@ export function useCategoryView() {
     }
 
     return {
-        // State
         showModal,
         activeTab,
         isLoading,
@@ -323,20 +313,16 @@ export function useCategoryView() {
         allowedIcons,
         filteredCategories,
 
-        // Form
         categoryForm,
         formErrors,
 
-        // Constants
         predefinedColors: PREDEFINED_COLORS,
         lucideIconMap: LUCIDE_ICON_MAP,
 
-        // Computed
         isFormValid,
         displayedCategories,
         allowedLucideIcons,
 
-        // Methods
         openModal,
         closeModal,
         setActiveTab,

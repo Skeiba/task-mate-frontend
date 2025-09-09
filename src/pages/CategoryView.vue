@@ -61,7 +61,6 @@
 
         <!-- Tab Content -->
         <div class="flex-1 overflow-y-auto">
-          <!-- Success/Error Messages -->
           <div v-if="successMessage || errorMessage" class="p-3 sm:p-6 pb-0">
             <div
                 v-if="successMessage"
@@ -382,7 +381,6 @@ import {
 import { useCategoryView } from "../composables/useCategoryView.ts"
 
 const {
-  // State
   showModal,
   activeTab,
   isLoading,
@@ -391,22 +389,17 @@ const {
   categories,
   selectedCategory,
 
-  // Form
   categoryForm,
   formErrors,
   filteredCategories,
 
-  // Constants
   predefinedColors,
   lucideIconMap,
 
-  // Computed
   isFormValid,
   displayedCategories,
   allowedLucideIcons,
 
-
-  // Methods
   openModal,
   closeModal,
   setActiveTab,

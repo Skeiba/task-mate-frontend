@@ -35,7 +35,7 @@ export function useAuthGuard(options: AuthGuardOptions = {}) {
     })
 
     const canAccess = computed(() => {
-        if (isLoading.value) return null // Still checking
+        if (isLoading.value) return null
         return isAuthenticated.value && hasRequiredRole.value
     })
 

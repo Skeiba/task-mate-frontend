@@ -6,45 +6,37 @@ import type { UpdateProfileData, ChangePasswordData, User } from "../types"
 export function useProfileView() {
     const authStore = useAuthStore()
 
-    // Modal state
     const showModal = ref(false)
     const activeTab = ref<'profile' | 'password' | 'danger'>('profile')
     const isLoading = ref(false)
     const successMessage = ref('')
     const errorMessage = ref('')
 
-    // Profile form
     const profileForm = ref<UpdateProfileData>({
         username: '',
         email: ''
     })
 
-    // Password form
     const passwordForm = ref<ChangePasswordData & { confirmNewPassword: string }>({
         oldPassword: '',
         newPassword: '',
         confirmNewPassword: ''
     })
 
-    // Form validation errors
     const profileErrors = ref<Partial<Record<keyof UpdateProfileData, string>>>({})
     const passwordErrors = ref<Partial<Record<keyof typeof passwordForm.value, string>>>({})
 
-    // Password visibility toggles
     const showCurrentPassword = ref(false)
     const showNewPassword = ref(false)
     const showConfirmPassword = ref(false)
 
-    // Danger zone states
     const showDeactivateConfirm = ref(false)
     const showDeleteConfirm = ref(false)
     const deactivateConfirmText = ref('')
     const deleteConfirmText = ref('')
 
-    // Current user data
     const currentUser = ref<User | null>(null)
 
-    // Computed properties
     const isProfileFormValid = computed(() => {
         return profileForm.value.username &&
             profileForm.value.email &&
@@ -86,7 +78,6 @@ export function useProfileView() {
         return deleteConfirmText.value === 'DELETE'
     })
 
-    // Methods
     const openModal = async () => {
         showModal.value = true
         activeTab.value = 'profile'
@@ -327,7 +318,6 @@ export function useProfileView() {
         errorMessage.value = ''
     }
 
-    // Watch for form changes to clear errors
     watch(() => profileForm.value, () => {
         if (Object.keys(profileErrors.value).length > 0) {
             validateProfileForm()
@@ -341,7 +331,6 @@ export function useProfileView() {
     }, { deep: true })
 
     return {
-        // State
         showModal,
         activeTab,
         isLoading,
@@ -349,24 +338,20 @@ export function useProfileView() {
         errorMessage,
         currentUser,
 
-        // Forms
         profileForm,
         passwordForm,
         profileErrors,
         passwordErrors,
 
-        // Password visibility
         showCurrentPassword,
         showNewPassword,
         showConfirmPassword,
 
-        // Danger zone
         showDeactivateConfirm,
         showDeleteConfirm,
         deactivateConfirmText,
         deleteConfirmText,
 
-        // Computed
         isProfileFormValid,
         isPasswordFormValid,
         passwordStrength,
@@ -374,7 +359,6 @@ export function useProfileView() {
         canDeactivate,
         canDelete,
 
-        // Methods
         openModal,
         closeModal,
         setActiveTab,

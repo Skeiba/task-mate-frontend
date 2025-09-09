@@ -1,4 +1,3 @@
-// composables/useSearch.ts
 import {ref, computed, watch, type Ref} from 'vue'
 import type { Task } from '../types'
 
@@ -13,7 +12,6 @@ export function useSearch(allTasks: Ref<Task[]>) {
 
     const isSearching = ref(false)
 
-    // Debounced search to avoid too many updates
     let searchTimeout: ReturnType<typeof setTimeout>
     const debouncedSearchQuery = ref('')
 
@@ -30,24 +28,19 @@ export function useSearch(allTasks: Ref<Task[]>) {
         }
 
         return allTasks.value.filter(task => {
-            // Text search in title and content
             const matchesText = !debouncedSearchQuery.value ||
                 task.title.toLowerCase().includes(debouncedSearchQuery.value.toLowerCase()) ||
                 (task.content && task.content.toLowerCase().includes(debouncedSearchQuery.value.toLowerCase()))
 
-            // Status filter
             const matchesStatus = searchFilters.value.status === 'all' ||
                 task.status === searchFilters.value.status
 
-            // Priority filter
             const matchesPriority = searchFilters.value.priority === 'all' ||
                 task.priority === searchFilters.value.priority
 
-            // Category filter - check if task has the selected category
             const matchesCategory = searchFilters.value.category === 'all' ||
                 task.categories.some(cat => cat.id === searchFilters.value.category)
 
-            // Date range filter
             const matchesDateRange = checkDateRange(task)
 
             return matchesText && matchesStatus && matchesPriority && matchesCategory && matchesDateRange

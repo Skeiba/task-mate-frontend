@@ -5,7 +5,6 @@ import { taskService } from '../services/taskService'
 import type { Category, Task } from '../types'
 import { useTaskView } from './useTaskView'
 
-// Constants
 const DEFAULT_PAGE_SIZE = 50
 const TODAY_TASKS_LIMIT = 20
 
@@ -13,26 +12,22 @@ export function useMainLayout() {
     const authStore = useAuthStore()
     const { handleToggleFavorite } = useTaskView()
 
-    // UI State
     const activeTab = ref('today')
     const activeTabData = ref<any>(null)
     const selectedItem = ref<any>(null)
     const showUserMenu = ref(false)
     const viewMode = ref<'list' | 'grid'>('list')
 
-    // Data State
     const categories = ref<Category[]>([])
     const allTasks = ref<Task[]>([])
     const todayTasks = ref<Task[]>([])
     const favoriteTasks = ref<Task[]>([])
 
-    // Loading States
     const isLoadingCategories = ref(false)
     const isLoadingTasks = ref(false)
     const categoriesError = ref('')
     const tasksError = ref('')
 
-    // Computed Properties
     const user = computed(() => authStore.user)
     const isAdmin = computed(() => user.value?.role === 'ADMIN')
 
@@ -89,7 +84,6 @@ export function useMainLayout() {
         }
     })
 
-    // Utility Functions
     const getTodayDateRange = () => {
         const today = new Date()
         const startOfDay = new Date(today.setHours(0, 0, 0, 0))
@@ -111,7 +105,6 @@ export function useMainLayout() {
         return tasks.filter(task => task.isFavorite)
     }
 
-    // Data Loading Methods
     const loadCategories = async (): Promise<void> => {
         try {
             isLoadingCategories.value = true
@@ -171,7 +164,6 @@ export function useMainLayout() {
         }
     }
 
-    // Task Management Methods
     const updateTaskInArrays = (updatedTask: Task): void => {
         // Update in allTasks
         const allIndex = allTasks.value.findIndex(task => task.id === updatedTask.id)
@@ -179,13 +171,11 @@ export function useMainLayout() {
             allTasks.value[allIndex] = updatedTask
         }
 
-        // Update in todayTasks
         const todayIndex = todayTasks.value.findIndex(task => task.id === updatedTask.id)
         if (todayIndex !== -1) {
             todayTasks.value[todayIndex] = updatedTask
         }
 
-        // Update favoriteTasks array based on new favorite status
         const favIndex = favoriteTasks.value.findIndex(task => task.id === updatedTask.id)
 
         if (updatedTask.isFavorite && favIndex === -1) {
@@ -215,7 +205,6 @@ export function useMainLayout() {
         }
     }
 
-    // Refresh Methods
     const refreshData = async (): Promise<void> => {
         await Promise.all([
             loadCategories(),
@@ -237,7 +226,6 @@ export function useMainLayout() {
         }
     }
 
-    // Navigation Methods
     const setActiveTab = (tab: string, data: any = null): void => {
         activeTab.value = tab
         activeTabData.value = data
@@ -253,7 +241,6 @@ export function useMainLayout() {
             : 'text-secondary hover-theme'
     }
 
-    // UI Methods
     const toggleUserMenu = (): void => {
         showUserMenu.value = !showUserMenu.value
     }
@@ -266,7 +253,6 @@ export function useMainLayout() {
         selectedItem.value = null
     }
 
-    // Lifecycle
     onMounted(() => {
         setActiveTab('today')
         refreshData()
@@ -279,14 +265,12 @@ export function useMainLayout() {
     })
 
     return {
-        // UI State
         activeTab,
         activeTabData,
         selectedItem,
         showUserMenu,
         viewMode,
 
-        // Data
         categories: categoriesWithTaskCount,
         allTasks,
         todayTasks,
@@ -294,19 +278,16 @@ export function useMainLayout() {
         currentTasks,
         todayTasksCount,
 
-        // Loading States
         isLoadingCategories,
         isLoadingTasks,
         categoriesError,
         tasksError,
 
-        // User Data
         user,
         isAdmin,
         userInitials,
         activeTabTitle,
 
-        // Methods
         setActiveTab,
         getTabClass,
         toggleUserMenu,

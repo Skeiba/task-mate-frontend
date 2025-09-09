@@ -29,7 +29,6 @@
 
       <!-- Modal Body -->
       <div class="flex flex-col md:flex-row bg-color m-1 sm:m-2 overflow-hidden rounded-xl" style="height: calc(85vh - 120px); min-height: 400px;">
-        <!-- Tab Navigation - Mobile: Horizontal, Desktop: Vertical -->
         <nav class="flex md:flex-col md:w-64 p-3 sm:p-5 justify-between md:justify-start md:space-y-2">
           <button
               @click="setActiveTab('profile')"
@@ -188,7 +187,6 @@
                   </button>
                 </div>
 
-                <!-- Password Strength Indicator -->
                 <div v-if="passwordForm.newPassword" class="mt-2">
                   <div class="flex space-x-1 mb-1">
                     <div
@@ -251,7 +249,6 @@
           <div v-if="activeTab === 'danger'" class="p-3 sm:p-6">
             <h3 class="text-base sm:text-lg font-medium text-red-600 mb-4">Danger Zone</h3>
             <div class="space-y-4 sm:space-y-6">
-              <!-- Deactivate Account -->
               <div class="border border-red-300 rounded-lg p-3 sm:p-4 bg-red-50">
                 <h4 class="font-medium text-red-800 mb-2 text-sm sm:text-base">Deactivate Account</h4>
                 <p class="text-xs sm:text-sm text-red-700 mb-3">
@@ -296,7 +293,6 @@
                 </div>
               </div>
 
-              <!-- Delete Account -->
               <div class="border border-red-400 rounded-lg p-3 sm:p-4 bg-red-100">
                 <h4 class="font-medium text-red-900 mb-2 text-sm sm:text-base">Delete Account</h4>
                 <p class="text-xs sm:text-sm text-red-800 mb-3">
@@ -364,7 +360,6 @@ import { computed } from 'vue'
 import { useProfileView } from "../composables/useProfileView.ts"
 
 const {
-  // State
   showModal,
   activeTab,
   isLoading,
@@ -372,32 +367,26 @@ const {
   errorMessage,
   currentUser,
 
-  // Forms
   profileForm,
   passwordForm,
   profileErrors,
   passwordErrors,
 
-  // Password visibility
   showCurrentPassword,
   showNewPassword,
   showConfirmPassword,
 
-  // Danger zone
   showDeactivateConfirm,
   showDeleteConfirm,
   deactivateConfirmText,
   deleteConfirmText,
 
-  // Computed
   isProfileFormValid,
   isPasswordFormValid,
-  // passwordStrength,
   passwordStrengthText,
   canDeactivate,
   canDelete,
 
-  // Methods
   openModal,
   closeModal,
   setActiveTab,

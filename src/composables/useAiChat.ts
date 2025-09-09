@@ -9,7 +9,6 @@ const STORAGE_KEYS = {
 }
 
 export function useAiChat() {
-    // State
     const isOpen = ref(false)
     const messages = ref<ChatMessage[]>([])
     const summaries = ref<Summary[]>([])
@@ -158,10 +157,8 @@ export function useAiChat() {
         message = inputValue.value.trim()
         inputValue.value = ''
 
-        // Add user message
         addMessage('user', message);
 
-        // Add AI message with loading state
         const aiMessageId = addMessage('ai', 'Processing your request...', { isLoading: true });
         isLoading.value = true;
 
@@ -171,17 +168,14 @@ export function useAiChat() {
             let botResponseContent: string;
             let messageUpdates: Partial<ChatMessage> = { isLoading: false };
 
-            // Determine response type and format accordingly
             if (typeof response.data === 'string') {
                 botResponseContent = response.data;
             } else if (response.data && typeof response.data === 'object') {
-                // Check if it's a task object
                 if ('title' in response.data && 'id' in response.data) {
                     const createdTask = response.data as Task;
                     messageUpdates.taskCreated = true;
                     messageUpdates.taskId = createdTask.id;
 
-                    // Rich task creation response
                     botResponseContent = `✅ **Task Created Successfully!**\n\n`;
                     botResponseContent += `📋 **Title:** ${createdTask.title}\n`;
 
@@ -201,14 +195,12 @@ export function useAiChat() {
                         botResponseContent += `🏷️ **Categories:** ${createdTask.categories.map(cat => cat.name).join(', ')}\n`;
                     }
                 } else {
-                    // Might be a categorization result or other response
                     botResponseContent = "I've processed your request successfully!";
                 }
             } else {
                 botResponseContent = "I've processed your request successfully!";
             }
 
-            // Update the AI message with the response
             updateMessage(aiMessageId, {
                 content: botResponseContent,
                 ...messageUpdates
@@ -219,7 +211,6 @@ export function useAiChat() {
 
             let errorContent = "Sorry, I couldn't process your request. Please try again.";
 
-            // Provide more specific error messages
             if (error?.response?.status === 404) {
                 errorContent = "The AI service is temporarily unavailable. Please try again later.";
             } else if (error?.response?.status === 400) {

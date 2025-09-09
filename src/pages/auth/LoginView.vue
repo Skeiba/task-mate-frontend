@@ -25,7 +25,6 @@
       </div>
 
       <form class="mt-8 space-y-6" @submit.prevent="handleSubmit">
-        <!-- Error Alert -->
         <div
             v-if="authStore.error"
             class="rounded-md bg-red-50 p-4 border border-red-200"
@@ -50,7 +49,6 @@
         </div>
 
         <div class="space-y-4">
-          <!-- Email Field -->
           <div>
             <label for="email" class="block text-sm font-medium text-secondary mb-1">
               Email address
@@ -71,7 +69,6 @@
             <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email }}</p>
           </div>
 
-          <!-- Password Field -->
           <div>
             <label for="password" class="block text-sm font-medium text-secondary mb-1">
               Password
@@ -88,7 +85,6 @@
                   :class="{'border-red-300 focus:ring-red-500 focus:border-red-500': errors.password}"
               />
 
-              <!-- Eye toggle sits OUTSIDE input -->
               <button
                   type="button"
                   @click="showPassword = !showPassword"
@@ -110,7 +106,6 @@
           </div>
         </div>
 
-        <!-- Remember Me & Forgot Password -->
         <div class="flex items-center justify-between">
           <div class="flex items-center cursor-pointer">
             <input
@@ -135,7 +130,6 @@
           </div>
         </div>
 
-        <!-- Submit Button -->
         <div>
           <button
               type="submit"

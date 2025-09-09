@@ -6,18 +6,15 @@ import {AlertCircle, CheckCircle, Circle, Clock, XCircle} from "lucide-vue-next"
 import {aiService} from "../services/aiService.ts";
 
 export function useTaskView() {
-    // Modal state
     const showModal = ref(false)
     const mode = ref<'create' | 'edit' | 'view'>('create')
     const isLoading = ref(false)
     const successMessage = ref('')
     const errorMessage = ref('')
 
-    // Task data
     const currentTask = ref<Task | null>(null)
     const availableCategories = ref<Category[]>([])
 
-    // Form data
     const taskForm = ref<TaskRequest>({
         title: '',
         content: '',
@@ -28,17 +25,14 @@ export function useTaskView() {
         isFavorite: false
     })
 
-    // Form validation errors
     const formErrors = ref<Partial<Record<keyof TaskRequest, string>>>({})
 
-    // UI state
     const showDeleteConfirm = ref(false)
     const selectedCategories = ref<Category[]>([])
     const showStatusDropdown = ref(false)
     const showPriorityDropdown = ref(false)
     const showDatePicker = ref(false)
 
-    // Computed properties
     const isFormValid = computed(() => {
         return taskForm.value.title.trim() &&
             Object.keys(formErrors.value).length === 0
@@ -103,7 +97,6 @@ export function useTaskView() {
 
     const isReadOnly = computed(() => mode.value === 'view')
 
-    // Helper methods for dropdowns
     const getPriorityIcon = (priority: string) => {
         const option = priorityOptions.find(p => p.value === priority)
         return option?.icon === 'Circle' ? Circle : option?.icon === 'Clock' ? Clock : AlertCircle
@@ -158,10 +151,8 @@ export function useTaskView() {
         try {
             const date = new Date(dateTimeValue)
 
-            // Check if date is valid
             if (isNaN(date.getTime())) return ''
 
-            // Format as "Dec 25, 2024 at 2:30 PM"
             const dateOptions: Intl.DateTimeFormatOptions = {
                 month: 'short',
                 day: 'numeric',
@@ -184,7 +175,6 @@ export function useTaskView() {
         }
     }
 
-    // Methods
     const openModal = async (taskId?: string, modalMode: 'create' | 'edit' | 'view' = 'create') => {
         showModal.value = true
         mode.value = modalMode
@@ -517,7 +507,6 @@ export function useTaskView() {
     }, { deep: true })
 
     return {
-        // State
         showModal,
         mode,
         isLoading,
@@ -530,21 +519,17 @@ export function useTaskView() {
         showPriorityDropdown,
         showDatePicker,
 
-        // Form
         taskForm,
         formErrors,
         selectedCategories,
 
-        // Constants
         priorityOptions,
         statusOptions,
 
-        // Computed
         isFormValid,
         modalTitle,
         isReadOnly,
 
-        // Helper methods
         getStatusIcon,
         getStatusColor,
         getStatusLabel,
@@ -555,7 +540,6 @@ export function useTaskView() {
         selectPriority,
         formatDateTime,
 
-        // Methods
         openModal,
         closeModal,
         loadTask,
